@@ -1,4 +1,5 @@
-from presidio_analyzer import AnalyzerEngine, NlpEngineProvider
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.nlp_engine import NlpEngineProvider
 
 def evaluate(text, ground_truth):
     """

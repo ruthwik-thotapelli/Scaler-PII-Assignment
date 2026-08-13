@@ -1,7 +1,8 @@
 import re
 import argparse
 from docx import Document
-from presidio_analyzer import AnalyzerEngine, NlpEngineProvider
+from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer.nlp_engine import NlpEngineProvider
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 from faker import Faker
