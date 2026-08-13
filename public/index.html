@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PII Redaction Engine - Enterprise Zero-Trust Data Masking</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="glass-bg"></div>
+  
+  <div class="container">
+    <header>
+      <div class="logo">🛡️</div>
+      <h1>PII Redaction Engine</h1>
+      <p class="subtitle">Context-Aware Data Sanitization & Synthetic Masking</p>
+    </header>
+
+    <main>
+      <!-- Upload Zone -->
+      <section class="card upload-card" id="drop-zone">
+        <input type="file" id="file-input" accept=".docx" hidden>
+        <div class="upload-content">
+          <div class="upload-icon">📤</div>
+          <h3>Drag & drop your Word document here</h3>
+          <p>or <span class="browse-btn">browse files</span></p>
+          <span class="file-limits">Supports only .docx up to 10MB</span>
+        </div>
+      </section>
+
+      <!-- Processing State -->
+      <section class="card status-card hidden" id="status-section">
+        <div class="loader-container">
+          <div class="glow-ring"></div>
+          <div class="loader-text">Neutralizing PII...</div>
+        </div>
+        <p class="status-detail">Analyzing grammatical context and mapping entities with synthetic alternatives...</p>
+      </section>
+
+      <!-- Success / Results Zone -->
+      <section class="card results-card hidden" id="results-section">
+        <div class="success-header">
+          <div class="success-icon">✓</div>
+          <h2>Document Anonymized Successfully!</h2>
+          <p>All sensitive information has been neutralized with structural integrity preserved.</p>
+        </div>
+        
+        <div class="actions-bar">
+          <button class="btn btn-primary" id="download-btn">📥 Download Redacted Document</button>
+          <button class="btn btn-secondary" id="reset-btn">Redact Another File</button>
+        </div>
+
+        <div class="mapping-container">
+          <h3>📊 Anonymization Map</h3>
+          <p class="map-sub">The engine consistently mapped the following detected items to fake counterparts:</p>
+          <div class="table-wrapper">
+            <table id="mapping-table">
+              <thead>
+                <tr>
+                  <th>Original PII</th>
+                  <th>Synthetic Alternative</th>
+                </tr>
+              </thead>
+              <tbody id="mapping-body">
+                <!-- Javascript will populate rows here -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Built for the Scaler AI Labs Assignment. Powered by Microsoft Presidio, spaCy, and Faker.</p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
