@@ -1,0 +1,14 @@
+venv/
+.venv/
+__pycache__/
+*.pyc
+*.docx
+evaluate_redaction.py
+generate_mock_doc.py
+simulate_development.py
+fake_commits.py
+evaluation_report.txt
+payload.json
+ping_api.py
+scrape_json.py
+solve_door3.py
