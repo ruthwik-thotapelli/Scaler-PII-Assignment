@@ -4,16 +4,17 @@ import sys
 import base64
 from fastapi import FastAPI, UploadFile, File, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from docx import Document
 
-# Append the parent directory to sys.path so we can import redact_pii
+# Append parent directory for core redact_pii imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from redact_pii import redact_docx
 import redact_pii
 
 app = FastAPI(title="PII Redaction API")
 
-# Enable CORS for frontend flexibility
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -22,6 +23,24 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Resolve directories
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+public_dir = os.path.join(base_dir, "public")
+
+# Serve UI Static Pages through FastAPI to guarantee no Vercel CDN 404s
+@app.get("/")
+def get_index():
+    return FileResponse(os.path.join(public_dir, "index.html"))
+
+@app.get("/style.css")
+def get_css():
+    return FileResponse(os.path.join(public_dir, "style.css"))
+
+@app.get("/app.js")
+def get_js():
+    return FileResponse(os.path.join(public_dir, "app.js"))
+
+# API routes
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy", "service": "PII Redaction Engine"}
@@ -29,24 +48,20 @@ def health_check():
 @app.post("/api/redact")
 async def redact_file(file: UploadFile = File(...)):
     if not file.filename.endswith(".docx"):
-        raise HTTPException(status_code=400, detail="Unsupported file format. Please upload a .docx file.")
+        raise HTTPException(status_code=400, detail="Unsupported format. Upload a .docx file.")
         
     try:
-        # Read the file to byte stream
         contents = await file.read()
         input_stream = io.BytesIO(contents)
         output_stream = io.BytesIO()
         
-        # Reset the global ENTITY_MAP to ensure clean separation between requests
+        # Reset global mapping
         redact_pii.ENTITY_MAP.clear()
         
         # Process redaction
         redact_docx(input_stream, output_stream)
-        
-        # Seek output stream to beginning for encoding
         output_stream.seek(0)
         
-        # Base64 encode the output docx to return in the JSON response
         encoded_file = base64.b64encode(output_stream.read()).decode("utf-8")
         
         return {
@@ -56,4 +71,4 @@ async def redact_file(file: UploadFile = File(...)):
             "mapping": dict(redact_pii.ENTITY_MAP)
         }
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Redaction failed: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
