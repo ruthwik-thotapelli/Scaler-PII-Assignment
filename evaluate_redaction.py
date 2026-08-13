@@ -1,12 +1,17 @@
-import argparse
-from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine, NlpEngineProvider
 
 def evaluate(text, ground_truth):
     """
     Evaluates the PII redaction by comparing Presidio's output with ground truth.
     ground_truth is a list of dicts: [{'text': 'Rashi Patil', 'type': 'PERSON'}, ...]
     """
-    analyzer = AnalyzerEngine()
+    configuration = {
+        "nlp_engine_name": "spacy",
+        "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+    }
+    provider = NlpEngineProvider(nlp_configuration=configuration)
+    nlp_engine = provider.create_engine()
+    analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
     results = analyzer.analyze(text=text, entities=[], language='en')
     
     predicted_entities = []

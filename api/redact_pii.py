@@ -1,7 +1,7 @@
 import re
 import argparse
 from docx import Document
-from presidio_analyzer import AnalyzerEngine
+from presidio_analyzer import AnalyzerEngine, NlpEngineProvider
 from presidio_anonymizer import AnonymizerEngine
 from presidio_anonymizer.entities import OperatorConfig
 from faker import Faker
@@ -12,6 +12,19 @@ Faker.seed(42)
 
 # Global dictionary to map real entities to fake entities consistently
 ENTITY_MAP = {}
+
+# Configure NLP Engine to use the installed en_core_web_sm model
+# This prevents Presidio from attempting to load the missing en_core_web_lg model in serverless environments
+configuration = {
+    "nlp_engine_name": "spacy",
+    "models": [{"lang_code": "en", "model_name": "en_core_web_sm"}],
+}
+provider = NlpEngineProvider(nlp_configuration=configuration)
+nlp_engine = provider.create_engine()
+
+# Initialize Engines globally
+analyzer = AnalyzerEngine(nlp_engine=nlp_engine)
+anonymizer = AnonymizerEngine()
 
 def get_fake_value(entity_type, real_value):
     """Generate a fake value based on the entity type, consistently mapping the same real value to the same fake value."""
@@ -69,10 +82,6 @@ def redact_text(text, analyzer, anonymizer):
 
 def redact_docx(input_path, output_path):
     """Read a docx file, redact PII, and save to a new file."""
-    # Initialize Presidio
-    analyzer = AnalyzerEngine()
-    anonymizer = AnonymizerEngine()
-    
     doc = Document(input_path)
     
     # Redact paragraphs
