@@ -9,4 +9,11 @@ ENTITY_MAP = {}
 def get_fake_value(entity_type, real_value):
     if real_value in ENTITY_MAP:
         return ENTITY_MAP[real_value]
-    # Generator logic here...
+    if entity_type == 'PERSON':
+        val = faker.name()
+    elif entity_type == 'EMAIL_ADDRESS':
+        val = faker.email()
+    else:
+        val = f'[{entity_type}]'
+    ENTITY_MAP[real_value] = val
+    return val
