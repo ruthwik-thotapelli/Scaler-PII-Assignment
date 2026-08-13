@@ -1,5 +1,6 @@
 from docx import Document
 from presidio_analyzer import AnalyzerEngine
+from faker import Faker
 
-# Initialize engine globally to save startup overhead
+faker = Faker()
 analyzer = AnalyzerEngine()
