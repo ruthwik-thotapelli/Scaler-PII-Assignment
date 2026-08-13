@@ -7,8 +7,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 from docx import Document
 
-# Append parent directory for core redact_pii imports
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+# Resolve directories
+base_dir = os.path.dirname(os.path.abspath(__file__))
+public_dir = os.path.join(base_dir, "public")
+
+# Append api directory for redact_pii imports
+sys.path.append(base_dir)
 from redact_pii import redact_docx
 import redact_pii
 
@@ -22,10 +26,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-# Resolve directories
-base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-public_dir = os.path.join(base_dir, "public")
 
 # Serve UI Static Pages through FastAPI to guarantee no Vercel CDN 404s
 @app.get("/")
